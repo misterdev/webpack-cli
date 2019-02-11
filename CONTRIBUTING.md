@@ -42,6 +42,12 @@ npm link
 npm link webpack-cli
 ```
 
+* Bootrap all the submodules before building for the first time
+```bash
+npm run bootstrap
+npm run build
+```
+
 * Run all the tests with:
   - `npm run test`
 
@@ -54,6 +60,7 @@ npm link webpack-cli
 * To test linting:
   - `npm run lint && npm run tslint`
 
+
 ### Setup with yarn
 * If you don't have yarn yet: 
   - `npm install -g yarn`
@@ -63,6 +70,12 @@ npm link webpack-cli
 yarn
 yarn link
 yarn link webpack-cli
+```
+
+* Bootrap all the submodules before building for the first time
+```bash
+yarn bootstrap
+yarn build
 ```
 
 * Run all the tests with:
