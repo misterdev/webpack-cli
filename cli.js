@@ -11,7 +11,8 @@ if (importLocal(__filename)) {
 	return;
 }
 process.title = "webpack";
-process.cliLogger = require('webpack-log')({
+// TODO import from node_modules require('@webpack-cli/reporter')
+process.reporter = require('./packages/reporter')({
 	name: 'webpack'
 });
 
@@ -26,7 +27,7 @@ const version = packageJson.engines.node;
 
 if (!semver.satisfies(process.version, version)) {
 	const rawVersion = version.replace(/[^\d\.]*/, "");
-	process.cliLogger.error(
+	process.reporter.error(
 		"webpack CLI requires at least Node v" +
 			rawVersion +
 			". " +
