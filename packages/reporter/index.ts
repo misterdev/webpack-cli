@@ -6,7 +6,7 @@ const Table = require('cli-table');
 class Reporter {
 
     name: string
-    // logs emits event for every king of output
+    // logs emits event for every kind of output
     logs: any
     // this is an instance of webpack-log
     logger: any
