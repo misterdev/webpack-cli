@@ -2,18 +2,45 @@ const getLogger = require('webpack-log');
 const webpack = require("webpack");
 const Table = require('cli-table');
 
-interface Reporter {
-    error: (error: string | string[]) => any,
-    warn: (error: string | string[]) => any,
-    stats: (stats: any, options: any) => any,
-    info: (info: string | string[]) => any,
-}
+// A reporter could be a class or a function
+class Reporter {
 
-const reporter: (string) => Reporter = (name) => {
-    const logger = getLogger(name)
+    name: string
+    // logs emits event for every king of output
+    logs: any
+    // this is an instance of webpack-log
+    logger: any
+
+    constructor(name, logs) {
+        this.name = name
+        this.logs = logs
+        this.logger = getLogger({ name })
+    
+        // We listen for every kind of output we want to handle
+        this.logs.addListener('stats', this.onStats)
+        this.logs.addListener('error', this.onError)
+        this.logs.addListener('warn', this.onWarning)
+        this.logs.addListener('info', this.onInfo)
+    }
+
+    onStats = (stats, options) => {
+        this._printStats(stats, options)
+    }
+
+    onError = (error) => {
+        this.logger.error(error)
+    }
+    
+    onWarning = (warn) => {
+        this.logger.warn(warn)
+    }
+    
+    onInfo = (info) => {
+        this.logger.info(info)
+    }
 
     // This is the function that we currently use for logging stats
-    function printStats(stats, outputOptions) {
+    _printStats(stats, outputOptions) {
         if (outputOptions.version) {
             console.log(`webpack ${webpack.version}`);
             process.exit(0);
@@ -21,9 +48,8 @@ const reporter: (string) => Reporter = (name) => {
         const statsObj = stats.toJson(outputOptions);
         const { assets, entrypoints, time, builtAt} = statsObj;
     
-        logger.info(`Built ${new Date(builtAt).toString()}`);
-        logger.info(`Compile Time ${time}ms`);
-        console.log('\n');
+        this.logger.info(`Built ${new Date(builtAt).toString()}`);
+        this.logger.info(`Compile Time ${time}ms\n`);
         
         let entries: Array<string> = new Array<string>();
         Object.keys(entrypoints).forEach(entry => {
@@ -43,15 +69,8 @@ const reporter: (string) => Reporter = (name) => {
                 table.push([emittedSign, asset.name, kbSize]);
             }
         })
-        logger.info(`\n${table.toString()}`)
-    }
-
-    return {
-        error: (error) => logger.error(error),
-        warn: (warn) => logger.warn(warn),
-        info: (info) => logger.info(info),
-        stats: (stats, outputOptions) => printStats(stats, outputOptions)
+        this.logger.info(`\n${table.toString()}`)
     }
 }
 
-module.exports = reporter;
+module.exports = Reporter;
