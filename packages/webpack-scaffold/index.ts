@@ -101,16 +101,24 @@ export function CheckList(name: string, message: string, choices: string[]): Inq
 	};
 }
 
-export function Input(name: string, message: string): InquirerInput {
+export function Input(name: string, message: string, defaultChoice?: string): IInquirerInput {
 	return {
+		default: defaultChoice,
 		message,
 		name,
 		type: "input"
 	};
 }
 
-export function InputValidate(name: string, message: string, cb?: (input: string) => string | boolean): InquirerInput {
+export function InputValidate(
+		name: string,
+		message: string,
+		cb?: (input: string) => string | boolean,
+		defaultChoice?: string,
+	): IInquirerInput {
+
 	return {
+		default: defaultChoice,
 		message,
 		name,
 		type: "input",
