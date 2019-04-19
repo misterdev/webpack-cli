@@ -152,7 +152,7 @@ export default class AddGenerator extends Generator {
 							entryType: boolean,
 						}) => {
 							// Ask different questions for entry points
-							return entryQuestions(self, entryTypeAnswer);
+							return entryQuestions(self, entryTypeAnswer.entryType);
 						})
 						.then((entryOptions: {
 							entryType: boolean;
