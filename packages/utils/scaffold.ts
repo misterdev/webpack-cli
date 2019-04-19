@@ -90,16 +90,14 @@ export default function runTransform(transformConfig: ITransformConfig, action: 
 				console.error(err.message ? err.message : err);
 			});
 	});
-	let successMessage: string = `Congratulations! Your new webpack configuration file has been created!\n`;
+	let successMessage: string =
+		chalk.green(`Congratulations! Your new webpack configuration file has been created!\n\n`) +
+		`You can now run ${chalk.green("npm run start")} to run your project!\n\n`;
+
 	if (initActionNotDefined && transformConfig.config.item) {
-		successMessage = `Congratulations! ${
+		successMessage = chalk.green(`Congratulations! ${
 			transformConfig.config.item
-		} has been ${action}ed!\n`;
+		} has been ${action}ed!\n`);
 	}
-	process.stdout.write(
-		"\n" +
-			chalk.green(
-				successMessage,
-			),
-	);
+	process.stdout.write(`\n${successMessage}`);
 }

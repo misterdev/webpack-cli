@@ -1,4 +1,4 @@
-import { InputValidate } from "@webpack-cli/webpack-scaffold";
+import { Input, InputValidate } from "@webpack-cli/webpack-scaffold";
 
 import validate from "./validate";
 
@@ -15,18 +15,17 @@ interface IEntry extends IYeoman {
  * @returns	{Object} An Object that holds the answers given by the user, later used to scaffold
  */
 
-export default function entry(self: IEntry, answer: {
-	entryType: boolean;
-}): Promise<{}> {
+export default function entry(self: IEntry, multiEntries: boolean): Promise<{}> {
 	let entryIdentifiers: string[];
 	let result: Promise<{}>;
-	if (answer.entryType) {
+	if (multiEntries) {
 		result = self
 			.prompt([
 				InputValidate(
 					"multipleEntries",
-					"Type the names you want for your modules (entry files), separated by comma [example: app,vendor]",
+					"Type the names you want for your modules (entry files) separated by comma",
 					validate,
+					"pageOne, pageTwo",
 				),
 			])
 			.then((multipleEntriesAnswer: {
@@ -49,7 +48,7 @@ export default function entry(self: IEntry, answer: {
 										!n[val].includes("path") &&
 										!n[val].includes("process")
 									) {
-										n[val] = `\'${n[val].replace(/"|'/g, "").concat(".js")}\'`;
+										n[val] = `\'./${n[val].replace(/"|'/g, "").concat(".js")}\'`;
 									}
 									webpackEntryPoint[val] = n[val];
 								});
@@ -64,8 +63,9 @@ export default function entry(self: IEntry, answer: {
 					self.prompt([
 						InputValidate(
 							`${entryProp}`,
-							`What is the location of "${entryProp}"? [example: ./src/${entryProp}]`,
+							`What is the location of "${entryProp}"?`,
 							validate,
+							`./src/${entryProp}`,
 						),
 					]),
 				).then((entryPropAnswer: object): object => {
@@ -77,7 +77,7 @@ export default function entry(self: IEntry, answer: {
 							!entryPropAnswer[val].includes("path") &&
 							!entryPropAnswer[val].includes("process")
 						) {
-							entryPropAnswer[val] = `\'${entryPropAnswer[val].replace(/"|'/g, "")}\'`;
+							entryPropAnswer[val] = `\'./${entryPropAnswer[val].replace(/"|'/g, "").concat(".js")}\'`;
 						}
 						webpackEntryPoint[val] = entryPropAnswer[val];
 					});
@@ -87,16 +87,17 @@ export default function entry(self: IEntry, answer: {
 	} else {
 		result = self
 			.prompt([
-				InputValidate(
+				Input(
 					"singularEntry",
-					"Which will be your application entry point? (src/index)",
+					"Which will be your application entry point?",
+					"src/index",
 				),
 			])
 			.then((singularEntryAnswer: {
 				singularEntry: string,
 			}): string => {
 				let { singularEntry } = singularEntryAnswer;
-				singularEntry = `\'${singularEntry.replace(/"|'/g, "")}\'`;
+				singularEntry = `\'./${singularEntry.replace(/"|'/g, "").concat(".js")}\'`;
 				if (singularEntry.length <= 0) {
 					self.usingDefaults = true;
 				}
