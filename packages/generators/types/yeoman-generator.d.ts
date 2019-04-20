@@ -47,7 +47,7 @@ declare module "yeoman-generator" {
 			name: string;
 		};
 		public fs: {
-			copyTpl: (src: string, dst: string, replacements?: object) => any;
+			copyTpl: (src: string, dst: string, replacements?: object) => void;
 			extendJSON: (dest: string, json: object) => void;
 		};
 		public composeWith(namespace: string, options?: object, settings?: IComposeSetting): YeomanGeneratorBase;
