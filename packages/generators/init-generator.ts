@@ -154,15 +154,19 @@ export default class InitGenerator extends Generator {
 		return this.prompt([
 				Confirm("multiEntries", "Will your application have multiple bundles?", false),
 			])
-			.then((multiEntriesAnswer: any) =>
+			.then((multiEntriesAnswer: {
+				multiEntries: boolean,
+			}) =>
 				entryQuestions(self, multiEntriesAnswer.multiEntries),
 			)
 			.then((entryOption: object | string) => {
 				if (typeof entryOption === "string" && entryOption.length > 0) {
 					this.configuration.config.webpackOptions.entry = `${entryOption}`;
+				} else if (typeof entryOption === "object") {
+					this.configuration.config.webpackOptions.entry = entryOption;
 				}
 			})
-			.then((_: void) =>
+			.then(() =>
 				this.prompt([
 					Input(
 						"outputDir",
@@ -194,7 +198,7 @@ export default class InitGenerator extends Generator {
 						`path.resolve(__dirname, '${outputDirAnswer.outputDir}')`;
 				}
 			})
-			.then((_: void) =>
+			.then(() =>
 				this.prompt([
 					Confirm("useBabel", "Will you be using ES2015?"),
 				]),
@@ -213,7 +217,7 @@ export default class InitGenerator extends Generator {
 					);
 				}
 			})
-			.then((_: void) =>
+			.then(() =>
 				this.prompt([
 					List("stylingType", "Will you use one of the below CSS solutions?", [
 						"No",
@@ -228,7 +232,7 @@ export default class InitGenerator extends Generator {
 			}) =>
 				({ ExtractUseProps, regExpForStyles } = styleQuestionHandler(self, stylingTypeAnswer.stylingType)),
 			)
-			.then((_: void) => {
+			.then(() => {
 				if (this.isProd) {
 					// Ask if the user wants to use extractPlugin
 					return this.prompt([

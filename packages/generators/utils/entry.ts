@@ -65,7 +65,7 @@ export default function entry(self: IEntry, multiEntries: boolean): Promise<{}> 
 							`${entryProp}`,
 							`What is the location of "${entryProp}"?`,
 							validate,
-							`./src/${entryProp}`,
+							`src/${entryProp}`,
 						),
 					]),
 				).then((entryPropAnswer: object): object => {
