@@ -14,7 +14,7 @@ import {
 
 import { IWebpackOptions } from "./types";
 import entryQuestions from "./utils/entry";
-import getBabelPlugin from "./utils/module";
+import langQuestionHandler from "./utils/language";
 import styleQuestionHandler, { ILoader, StylingType } from "./utils/style";
 import tooltip from "./utils/tooltip";
 
@@ -197,22 +197,17 @@ export default class InitGenerator extends Generator {
 			})
 			.then(() =>
 				this.prompt([
-					Confirm("useBabel", "Will you be using ES2015?"),
+					List("langType", "Will you use one of the below JS solutions?", [
+						"ES6",
+						"Typescript",
+						"No",
+					]),
 				]),
 			)
-			.then((useBabelAnswer: {
-				useBabel: boolean;
+			.then((langTypeAnswer: {
+				langType: boolean;
 			}) => {
-				if (useBabelAnswer.useBabel) {
-					this.configuration.config.webpackOptions.module.rules.push(
-						getBabelPlugin(),
-					);
-					this.dependencies.push(
-						"babel-loader",
-						"@babel/core",
-						"@babel/preset-env",
-					);
-				}
+				langQuestionHandler(this, langTypeAnswer.langType);
 			})
 			.then(() =>
 				this.prompt([
