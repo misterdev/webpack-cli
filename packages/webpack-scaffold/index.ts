@@ -101,7 +101,7 @@ export function CheckList(name: string, message: string, choices: string[]): Inq
 	};
 }
 
-export function Input(name: string, message: string, defaultChoice?: string): IInquirerInput {
+export function Input(name: string, message: string, defaultChoice?: string): InquirerInput {
 	return {
 		default: defaultChoice,
 		message,
@@ -115,7 +115,7 @@ export function InputValidate(
 		message: string,
 		cb?: (input: string) => string | boolean,
 		defaultChoice?: string,
-	): IInquirerInput {
+	): InquirerInput {
 
 	return {
 		default: defaultChoice,

@@ -15,7 +15,10 @@ interface Entry extends Yeoman {
  * @returns	{Object} An Object that holds the answers given by the user, later used to scaffold
  */
 
-export default function entry(self: IEntry, multiEntries: boolean): Promise<{}> {
+export default function entry(
+	self: Entry,
+	multiEntries: boolean,
+): Promise<{}> {
 	let entryIdentifiers: string[];
 	let result: Promise<{}>;
 	if (multiEntries) {
@@ -25,8 +28,8 @@ export default function entry(self: IEntry, multiEntries: boolean): Promise<{}> 
 					"multipleEntries",
 					"How do you want to name your bundles? (separated by comma)",
 					validate,
-					"pageOne, pageTwo",
-				),
+					"pageOne, pageTwo"
+				)
 			])
 			.then(
 				(multipleEntriesAnswer: { multipleEntries: string }): Promise<void | {}> => {
@@ -52,7 +55,7 @@ export default function entry(self: IEntry, multiEntries: boolean): Promise<{}> 
 													!n[val].includes("path") &&
 													!n[val].includes("process")
 												) {
-													n[val] = `\'${n[val].replace(/"|'/g, "").concat(".js")}\'`;
+													n[val] = `\'./${n[val].replace(/"|'/g, "").concat(".js")}\'`;
 												}
 												webpackEntryPoint[val] = n[val];
 											}
@@ -65,59 +68,37 @@ export default function entry(self: IEntry, multiEntries: boolean): Promise<{}> 
 							);
 						}, Promise.resolve());
 					}
+
 					return forEachPromise(
 						entryIdentifiers,
 						(entryProp: string): Promise<{} | void> =>
 							self.prompt([
 								InputValidate(
 									`${entryProp}`,
-									`What is the location of "${entryProp}"? [example: ./src/${entryProp}]`,
-									validate
-								)
-							])
-					).then(
-						(entryPropAnswer: object): object => {
-							Object.keys(entryPropAnswer).forEach(
-								(val: string): void => {
-									if (
-										entryPropAnswer[val].charAt(0) !== "(" &&
-										entryPropAnswer[val].charAt(0) !== "[" &&
-										!entryPropAnswer[val].includes("function") &&
-										!entryPropAnswer[val].includes("path") &&
-										!entryPropAnswer[val].includes("process")
-									) {
-										n[val] = `\'./${n[val].replace(/"|'/g, "").concat(".js")}\'`;
+									`What is the location of "${entryProp}"?`,
+									validate,
+									`src/${entryProp}`,
+								),
+						]))
+						.then(
+							(entryPropAnswer: object): object => {
+								Object.keys(entryPropAnswer).forEach(
+									(val: string): void => {
+										if (
+											entryPropAnswer[val].charAt(0) !== "(" &&
+											entryPropAnswer[val].charAt(0) !== "[" &&
+											!entryPropAnswer[val].includes("function") &&
+											!entryPropAnswer[val].includes("path") &&
+											!entryPropAnswer[val].includes("process")
+										) {
+											entryPropAnswer[val] = `\'./${entryPropAnswer[val].replace(/"|'/g, "").concat(".js")}\'`;
+										}
+										webpackEntryPoint[val] = entryPropAnswer[val];
 									}
-									webpackEntryPoint[val] = n[val];
-								});
-							} else {
-								n = {};
+								);
+								return webpackEntryPoint;
 							}
-							return fn(trimmedProp);
-						});
-					}, Promise.resolve());
-				}
-				return forEachPromise(entryIdentifiers, (entryProp: string): Promise<{} | void> =>
-					self.prompt([
-						InputValidate(
-							`${entryProp}`,
-							`Which will be the entry point of "${entryProp}"?`,
-							validate,
-							`src/${entryProp}`,
-						),
-					]),
-				).then((entryPropAnswer: object): object => {
-					Object.keys(entryPropAnswer).forEach((val: string): void => {
-						if (
-							entryPropAnswer[val].charAt(0) !== "(" &&
-							entryPropAnswer[val].charAt(0) !== "[" &&
-							!entryPropAnswer[val].includes("function") &&
-							!entryPropAnswer[val].includes("path") &&
-							!entryPropAnswer[val].includes("process")
-						) {
-							entryPropAnswer[val] = `\'./${entryPropAnswer[val].replace(/"|'/g, "").concat(".js")}\'`;
-						}
-					);
+						);
 				}
 			);
 	} else {
@@ -127,15 +108,16 @@ export default function entry(self: IEntry, multiEntries: boolean): Promise<{}> 
 					"singularEntry",
 					"Which will be your application entry point?",
 					"src/index",
-				),
+				)
 			])
-			.then((singularEntryAnswer: {
-				singularEntry: string,
-			}): string => {
-				let { singularEntry } = singularEntryAnswer;
-				singularEntry = `\'./${singularEntry.replace(/"|'/g, "").concat(".js")}\'`;
-				if (singularEntry.length <= 0) {
-					self.usingDefaults = true;
+			.then(
+				(singularEntryAnswer: { singularEntry: string }): string => {
+					let { singularEntry } = singularEntryAnswer;
+					singularEntry = `\'./${singularEntry.replace(/"|'/g, "").concat(".js")}\'`;
+					if (singularEntry.length <= 0) {
+						self.usingDefaults = true;
+					}
+					return singularEntry;
 				}
 			);
 	}
