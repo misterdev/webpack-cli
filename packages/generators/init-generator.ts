@@ -59,6 +59,7 @@ export default class InitGenerator extends Generator {
 			config: {
 				configName: this.isProd ? "prod" : "config",
 				topScope: [],
+				// TODO migrate tslint
 				// tslint:disable: object-literal-sort-keys
 				webpackOptions: {
 					mode: this.isProd ? "'production'" : "'development'",
