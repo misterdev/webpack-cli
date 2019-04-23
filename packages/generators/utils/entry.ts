@@ -18,7 +18,7 @@ interface Entry extends Yeoman {
 export default function entry(
 	self: Entry,
 	multiEntries: boolean,
-): Promise<{}> {
+): Promise<object | string> {
 	let entryIdentifiers: string[];
 	let result: Promise<{}>;
 	if (multiEntries) {
